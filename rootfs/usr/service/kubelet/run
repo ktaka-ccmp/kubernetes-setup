@@ -1,0 +1,6 @@
+#!/bin/bash
+
+exec 2>&1
+#exec /usr/local/bin/kubelet  --api-servers=https://172.16.1.1 --kubeconfig=/var/lib/kube-proxy/kubeconfig
+exec /usr/local/bin/kubelet  --api-servers=https://172.16.1.1 --config=/etc/kubernetes/manifests
+
