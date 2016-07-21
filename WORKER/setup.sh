@@ -22,18 +22,18 @@ docker run hello-world
 
 ###########
 rsync -av ./rootfs/ /
-gunzip /usr/local/bin/hyperkube.gz
-gunzip /usr/local/bin/etcd.gz
+gunzip -f /usr/local/bin/hyperkube.gz
+gunzip -f /usr/local/bin/etcd.gz
 
 iptables -F  -t nat
 ip link set docker0 down 
 ip link delete docker0
 
-ip link add name cbr0 type bridge 
-ip link set dev cbr0 mtu 1460
-ip add add 10.3.0.1/16 dev cbr0
-ip link set dev cbr0 up 
-iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -m addrtype ! --dst-type LOCAL -j MASQUERADE
+#ip link add name cbr0 type bridge 
+#ip link set dev cbr0 mtu 1460
+#ip add add 10.3.0.1/16 dev cbr0
+#ip link set dev cbr0 up 
+#iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -m addrtype ! --dst-type LOCAL -j MASQUERADE
 
 cat<<EOF>/etc/systemd/system/multi-user.target.wants/docker.service
 [Unit]
@@ -66,4 +66,5 @@ service docker restart
 
 aptitude install -y daemontools-run 
 
+svc -t /etc/service/*
 
