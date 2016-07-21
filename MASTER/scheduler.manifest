@@ -13,10 +13,7 @@
         "command": [
           "/hyperkube",
           "scheduler",
-          "--master=127.0.0.1:8080",
-          "$SCHEDULER_FLAG1",
-          ...
-          "$SCHEDULER_FLAGN"
+          "--master=127.0.0.1:8080"
         ],
         "livenessProbe": {
           "httpGet": {

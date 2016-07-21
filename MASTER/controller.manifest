@@ -13,9 +13,11 @@
         "command": [
           "/hyperkube",
           "controller-manager",
-          "$CNTRLMNGR_FLAG1",
-          ...
-          "$CNTRLMNGR_FLAGN"
+          "--cluster-name=ktaka-cluster",
+          "--cluster-cidr=",
+          "--allocate-node-cidrs=",
+          "--cloud-provider=unset",
+          "--master=127.0.0.1:8080"
         ],
         "volumeMounts": [
           {
