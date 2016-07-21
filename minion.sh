@@ -21,7 +21,8 @@ service docker status
 docker run hello-world
 
 ###########
-rsync -av ./rootfs/ /
+rsync -av ./rootfs_common/ /
+rsync -av ./rootfs_minion/ /
 gunzip -f /usr/local/bin/hyperkube.gz
 gunzip -f /usr/local/bin/etcd.gz
 
