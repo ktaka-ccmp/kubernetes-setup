@@ -1,0 +1,21 @@
+#!/bin/bash
+
+exec 2>&1
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/apiserver \
+ 	--insecure-bind-address=0.0.0.0 \
+ 	--insecure-port=8080 \
+ 	--etcd-servers=http://127.0.0.1:2739 \
+ 	--logtostderr=true \
+	'
+
+############
+ --service-cluster-ip-range=${1}\
+ --admission-control=${2}\
+ --service-node-port-range=${3}\
+ --advertise-address=${4}\
+ --client-ca-file=/srv/kubernetes/ca.crt\
+ --tls-cert-file=/srv/kubernetes/server.cert\
+ --tls-private-key-file=/srv/kubernetes/server.key"
+

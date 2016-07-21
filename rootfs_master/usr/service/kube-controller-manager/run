@@ -1,0 +1,16 @@
+#!/bin/bash
+
+exec 2>&1
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/controller-manager   \
+ 	--master=127.0.0.1:8080 \
+ 	--logtostderr=true
+	'
+
+####
+# --root-ca-file=/srv/kubernetes/ca.crt\
+# --service-account-private-key-file=/srv/kubernetes/server.key\
+
+
+
