@@ -4,19 +4,13 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/apiserver \
- 	--insecure-bind-address=0.0.0.0 \
+ 	--insecure-bind-address=172.16.1.101 \
  	--insecure-port=8080 \
- 	--etcd-servers=http://127.0.0.1:2739 \
+ 	--etcd-servers=http://127.0.0.1:2379 \
 	--service-cluster-ip-range=10.0.0.0/16 \
+	--service-node-port-range=30000-32767 \
  	--logtostderr=true \
+	--admission-control=AlwaysAdmit \
+	--advertise-address=172.16.1.101 \
 	'
-
-############
- --service-cluster-ip-range=${1}\
- --admission-control=${2}\
- --service-node-port-range=${3}\
- --advertise-address=${4}\
- --client-ca-file=/srv/kubernetes/ca.crt\
- --tls-cert-file=/srv/kubernetes/server.cert\
- --tls-private-key-file=/srv/kubernetes/server.key"
 

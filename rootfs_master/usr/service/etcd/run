@@ -4,8 +4,10 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/etcd  \
-        --advertise-client-urls http://172.16.1.101:2379 \
 	--listen-client-urls http://0.0.0.0:2379 \
+	--listen-peer-urls http://0.0.0.0:2380 \
+        --advertise-client-urls http://172.16.1.101:2379 \
+        --initial-advertise-peer-urls http://172.16.1.101:2380 \
 	--data-dir /var/lib/etcd/data 
 	'
 
