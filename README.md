@@ -14,8 +14,9 @@ apt-get update && apt-get install -y git \
 ### On Node
 
 ```
-apt-get update ; apt-get install -y git ; git clone https://github.com/ktaka-ccmp/kubernetes-setup.git
-cd kubernetes-setup
-./node.sh
+apt-get update && apt-get install -y git \
+&& git clone https://github.com/ktaka-ccmp/kubernetes-setup.git \
+&& cd kubernetes-setup \
+&& ./node.sh
 ```
 
