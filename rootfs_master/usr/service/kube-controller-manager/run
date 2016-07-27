@@ -4,10 +4,9 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/controller-manager   \
- 	--master=127.0.0.1:8080 \
+ 	--master=172.16.1.101:8080 \
 	--allocate-node-cidrs=true \
 	--cluster-cidr=10.10.0.0/16 \
  	--logtostderr=true
 	'
-
 
