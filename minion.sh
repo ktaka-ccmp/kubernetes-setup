@@ -20,6 +20,8 @@ aptitude -y install docker-engine
 service docker status
 docker run hello-world
 
+service docker stop
+
 ###########
 rsync -av ./rootfs_common/ /
 rsync -av ./rootfs_minion/ /
@@ -30,12 +32,6 @@ gunzip -f /usr/local/bin/etcdctl.gz
 iptables -F  -t nat
 ip link set docker0 down 
 ip link delete docker0
-
-#ip link add name cbr0 type bridge 
-#ip link set dev cbr0 mtu 1460
-#ip add add 10.3.0.1/16 dev cbr0
-#ip link set dev cbr0 up 
-#iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -m addrtype ! --dst-type LOCAL -j MASQUERADE
 
 cat<<EOF>/etc/systemd/system/multi-user.target.wants/docker.service
 [Unit]
@@ -63,8 +59,6 @@ Delegate=yes
 [Install]
 WantedBy=multi-user.target
 EOF
-
-service docker restart 
 
 aptitude install -y daemontools-run 
 
