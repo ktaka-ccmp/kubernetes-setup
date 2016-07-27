@@ -24,7 +24,7 @@ service docker stop
 
 ###########
 rsync -av ./rootfs_common/ /
-rsync -av ./rootfs_minion/ /
+rsync -av ./rootfs_node/ /
 gunzip -f /usr/local/bin/hyperkube.gz
 gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
