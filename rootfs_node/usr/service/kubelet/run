@@ -5,7 +5,7 @@ exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/kubelet  \
 	--api-servers=http://172.16.1.101:8080 \
-	--config=/etc/kubernetes/manifests \
-	--configure-cbr0=true \
 	'
 
+	--config=/etc/kubernetes/manifests \
+	--configure-cbr0=true \
