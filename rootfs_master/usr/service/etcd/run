@@ -7,6 +7,7 @@ exec \
 	--listen-client-urls http://0.0.0.0:2379 \
 	--listen-peer-urls http://0.0.0.0:2380 \
         --advertise-client-urls http://172.16.1.101:2379 \
+	--initial-cluster default=http://172.16.1.101:2380 \
         --initial-advertise-peer-urls http://172.16.1.101:2380 \
 	--data-dir /var/lib/etcd/data 
 	'
