@@ -6,7 +6,7 @@
 
 ```
 apt-get update && apt-get install -y git \
-&& git clone https://github.com/ktaka-ccmp/kubernetes-setup.git \
+&& git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
 && cd kubernetes-setup \
 && ./master.sh
 ```
@@ -15,7 +15,7 @@ apt-get update && apt-get install -y git \
 
 ```
 apt-get update && apt-get install -y git \
-&& git clone https://github.com/ktaka-ccmp/kubernetes-setup.git \
+&& git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
 && cd kubernetes-setup \
 && ./node.sh
 ```
