@@ -22,3 +22,5 @@ sleep 3
 etcdctl mk /coreos.com/network/config '{"Network":"10.0.0.0/16","SubnetLen": 24}'
 etcdctl get /coreos.com/network/config
 
+sleep 5
+watch -n 1 "kubectl get svc -o wide ; kubectl get pod -o wide ;kubectl get node"
