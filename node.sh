@@ -65,3 +65,5 @@ aptitude install -y daemontools-run
 
 svc -t /etc/service/*
 
+service docker start
+
