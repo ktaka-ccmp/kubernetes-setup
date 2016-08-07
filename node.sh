@@ -30,9 +30,6 @@ gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
 gunzip -f /usr/local/bin/flanneld.gz
 
-iptables -F  -t nat
-ip link set docker0 down 
-ip link delete docker0
 
 cat<<EOF>/etc/systemd/system/multi-user.target.wants/docker.service
 [Unit]
@@ -61,10 +58,13 @@ Delegate=yes
 WantedBy=multi-user.target
 EOF
 
-aptitude install -y daemontools-run 
-
-svc -t /etc/service/*
-
 systemctl daemon-reload
 service docker start
+
+iptables -F  -t nat
+ip link set docker0 down 
+ip link delete docker0
+
+aptitude install -y daemontools-run 
+svc -t /etc/service/*
 
