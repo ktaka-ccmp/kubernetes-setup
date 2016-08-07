@@ -48,7 +48,7 @@ Type=notify
 # exists and systemd currently does not support the cgroup feature set required
 # for containers run by docker
 #ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS
-ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
+ExecStart=/usr/bin/docker daemon -H fd:// --bridge=flannel0 --iptables=false --ip-masq=false
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
