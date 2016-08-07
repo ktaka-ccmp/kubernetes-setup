@@ -42,7 +42,7 @@ Requires=docker.socket
 EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
 #ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
-ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --ip-masq=\${FLANNEL_IPMASQ}
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --ip-masq=\${FLANNEL_IPMASQ} --insecure-registry 172.16.1.101:5000
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
