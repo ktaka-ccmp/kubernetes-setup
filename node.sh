@@ -39,13 +39,10 @@ After=network.target docker.socket
 Requires=docker.socket
 
 [Service]
-EnvironmentFile=-/etc/default/docker
+EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
-# the default is not to use systemd for cgroups because the delegate issues still
-# exists and systemd currently does not support the cgroup feature set required
-# for containers run by docker
-#ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS
-ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
+#ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --bridge=cbr0 --ip-masq=${FLANNEL_IPMASQ}
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
