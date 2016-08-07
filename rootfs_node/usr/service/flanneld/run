@@ -1,0 +1,10 @@
+#!/bin/bash
+
+exec 2>&1
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/flanneld  \
+	--etcd-endpoints=http://172.16.1.101:2379 \
+	--v=3 \
+	'
+

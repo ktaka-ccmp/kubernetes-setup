@@ -28,10 +28,8 @@ rsync -av ./rootfs_node/ /
 gunzip -f /usr/local/bin/hyperkube.gz
 gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
+gunzip -f /usr/local/bin/flanneld.gz
 
-iptables -F  -t nat
-ip link set docker0 down 
-ip link delete docker0
 
 cat<<EOF>/etc/systemd/system/multi-user.target.wants/docker.service
 [Unit]
@@ -41,13 +39,10 @@ After=network.target docker.socket
 Requires=docker.socket
 
 [Service]
-EnvironmentFile=-/etc/default/docker
+EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
-# the default is not to use systemd for cgroups because the delegate issues still
-# exists and systemd currently does not support the cgroup feature set required
-# for containers run by docker
-#ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS
-ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
+#ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --ip-masq=\${FLANNEL_IPMASQ}
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
@@ -60,7 +55,14 @@ Delegate=yes
 WantedBy=multi-user.target
 EOF
 
-aptitude install -y daemontools-run 
+systemctl daemon-reload
+service docker start
 
+#iptables -F  -t nat
+#ip link set docker0 down 
+#ip link delete docker0
+
+
+aptitude install -y daemontools-run 
 svc -t /etc/service/*
 
