@@ -5,8 +5,8 @@ exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/controller-manager   \
  	--master=127.0.0.1:8080 \
+	--allocate-node-cidrs=true \
+	--cluster-cidr=10.0.0.0/16 \
  	--logtostderr=true
 	'
 
-	--allocate-node-cidrs=true \
-	--cluster-cidr=10.0.0.0/16 \
