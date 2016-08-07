@@ -42,7 +42,7 @@ Requires=docker.socket
 EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
 #ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
-ExecStart=/usr/bin/docker daemon -H fd:// --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --bridge=cbr0 --ip-masq=${FLANNEL_IPMASQ}
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ}
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
@@ -58,9 +58,10 @@ EOF
 systemctl daemon-reload
 service docker start
 
-iptables -F  -t nat
-ip link set docker0 down 
-ip link delete docker0
+#iptables -F  -t nat
+#ip link set docker0 down 
+#ip link delete docker0
+
 
 aptitude install -y daemontools-run 
 svc -t /etc/service/*
