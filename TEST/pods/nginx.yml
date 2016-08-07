@@ -3,20 +3,23 @@ kind: Service
 metadata:
   name: my-nginx-svc
   labels:
-    app: nginx
+    run: my-nginx
 spec:
-  type: NodePort
+#  type: NodePort
   ports:
   - port: 80
+#    targetPort: 9376
+#  externalIPs:
+#  - 80.11.12.10
   selector:
-    app: nginx
+    run: my-nginx
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: my-nginx
 spec:
-  replicas: 3
+  replicas: 4
   template:
     metadata:
       labels:
