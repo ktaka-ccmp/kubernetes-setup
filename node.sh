@@ -28,6 +28,7 @@ rsync -av ./rootfs_node/ /
 gunzip -f /usr/local/bin/hyperkube.gz
 gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
+gunzip -f /usr/local/bin/flanneld.gz
 
 iptables -F  -t nat
 ip link set docker0 down 
