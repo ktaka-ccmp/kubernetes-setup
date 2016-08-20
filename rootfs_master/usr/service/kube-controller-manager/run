@@ -5,6 +5,7 @@ exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/controller-manager   \
  	--master=127.0.0.1:8080 \
+	--node-monitor-grace-period=20s \
 	--pod-eviction-timeout=1m0s \
 #	--allocate-node-cidrs=true \
 #	--cluster-cidr=10.0.0.0/16 \
