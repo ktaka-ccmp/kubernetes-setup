@@ -5,8 +5,7 @@ metadata:
   labels:
     run: my-nginx
 spec:
-  clusterIP: None
-#  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 80
 #    targetPort: 9376
@@ -15,12 +14,12 @@ spec:
   selector:
     run: my-nginx
 ---
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: ReplicationController
 metadata:
   name: my-nginx
 spec:
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
