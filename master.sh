@@ -1,11 +1,30 @@
 #!/bin/bash 
 
+MASTER_IP=172.16.1.101
+
 ########## Install docker
 apt-get update
 apt-get install -y aptitude
 
 aptitude -y update 
 aptitude -y upgrade
+
+###########
+CERTDIR=/srv/kubernetes/
+
+if [ -d $CERTDIR ] ; then
+        echo $CERTDIR already exist.
+        exit 0
+fi
+
+mkdir -p $CERTDIR && \
+pushd $CERTDIR && \
+openssl genrsa -out ca.key 2048 && \
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=${MASTER_IP}" -days 10000 -out ca.crt && \
+openssl genrsa -out server.key 2048 && \
+openssl req -new -key server.key -subj "/CN=${MASTER_IP}" -out server.csr && \
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 10000 && \
+popd
 
 ###########
 rsync -av ./rootfs_common/ /
@@ -45,7 +64,7 @@ Requires=docker.socket
 
 [Service]
 Type=notify
-ExecStart=/usr/bin/dockerd -H fd://  --insecure-registry 172.16.1.101:5000
+ExecStart=/usr/bin/dockerd -H fd://  --insecure-registry ${MASTER_IP}:5000
 ExecReload=/bin/kill -s HUP $MAINPID
 LimitNOFILE=infinity
 LimitNPROC=infinity
@@ -66,10 +85,11 @@ docker run hello-world
 
 docker run -d -p 5000:5000 -v /var/opt:/var/lib/registry registry \
 && cd TEST/pods/nginx && docker build -t ktaka/nginx . \
-&& docker tag ktaka/nginx 172.16.1.101:5000/ktaka/nginx \
-&& docker push 172.16.1.101:5000/ktaka/nginx
+&& docker tag ktaka/nginx ${MASTER_IP}:5000/ktaka/nginx \
+&& docker push ${MASTER_IP}:5000/ktaka/nginx
 
 ######################
 
 sleep 5
 watch -n 1 "kubectl get svc -o wide ; kubectl get pod -o wide ;kubectl get node"
+
