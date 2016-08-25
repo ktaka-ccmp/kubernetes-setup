@@ -19,7 +19,3 @@ exec \
 	--v 2
 	'
 
-
-	--kubelet-certificate-authority=/srv/kubernetes/ca.crt \
-	--kubelet-client-certificate=/srv/kubernetes/server.crt \
-	--kubelet-client-key=/srv/kubernetes/server.key \

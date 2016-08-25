@@ -14,5 +14,3 @@ exec \
 	--v 1 \
 	'
 
-	--allocate-node-cidrs \
-	--cluster-cidr="10.253.0.0/16" \
