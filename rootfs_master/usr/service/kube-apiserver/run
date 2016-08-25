@@ -16,5 +16,10 @@ exec \
 	--tls-private-key-file=/srv/kubernetes/server.key \
 	--service-account-key-file=/srv/kubernetes/server.key \
 	--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota \
+	--v 2
 	'
 
+
+	--kubelet-certificate-authority=/srv/kubernetes/ca.crt \
+	--kubelet-client-certificate=/srv/kubernetes/server.crt \
+	--kubelet-client-key=/srv/kubernetes/server.key \

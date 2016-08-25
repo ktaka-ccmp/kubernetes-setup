@@ -9,6 +9,10 @@ exec \
 	--pod-eviction-timeout=20s \
 	--service-account-private-key-file=/srv/kubernetes/server.key \
 	--root-ca-file=/srv/kubernetes/ca.crt \
- 	--logtostderr=true
+	--service-cluster-ip-range="10.253.0.0/16" \
+ 	--logtostderr=true \
+	--v 1 \
 	'
 
+	--allocate-node-cidrs \
+	--cluster-cidr="10.253.0.0/16" \
