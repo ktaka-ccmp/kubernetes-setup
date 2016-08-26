@@ -5,13 +5,12 @@
 ### On Master
 
 ```
-echo export MASTER_IP=$(hostname -i)
-export MASTER_IP=$(hostname -i);  script=./master.sh
+export MASTER_IP=$(hostname -i)
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
 && git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
 && cd kubernetes-setup \
-&& $script
+&& ./master.sh
 ```
 
 ### On Node
@@ -19,12 +18,11 @@ apt-get update && apt-get install -y git \
 ```
 export MASTER_IP=${MASTER_IP}
 
-script=./node.sh
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
 && git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
 && cd kubernetes-setup \
-&& $script
+&& ./node.sh
 ```
 
 or...
@@ -32,8 +30,7 @@ or...
 ```
 export MASTER_IP=${MASTER_IP}
 
-script=./node.sh
-rsync -ae ssh ktaka@${MASTER_IP}:~/kubernetes-setup ./ && cd kubernetes-setup && $script
+rsync -ae ssh ktaka@${MASTER_IP}:~/kubernetes-setup ./ && cd kubernetes-setup && ./node.sh 
 ```
 
 ### How to monitor whole cluster
