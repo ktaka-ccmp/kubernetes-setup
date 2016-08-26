@@ -9,7 +9,6 @@ exec \
 	--pod-eviction-timeout=20s \
 	--service-account-private-key-file=/srv/kubernetes/server.key \
 	--root-ca-file=/srv/kubernetes/ca.crt \
- 	--logtostderr=true \
-	--v 1 \
+ 	--logtostderr=true
 	'
 
