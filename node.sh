@@ -66,7 +66,7 @@ service docker start
 
 ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts
 mkdir -p /var/run/kubernetes && \
-scp ${MASTER_IP}:/srv/pki/{MY_IP}.{crt,key} /var/run/kubernetes/ && \
+scp ${MASTER_IP}:/srv/pki/${MY_IP}.{crt,key} /var/run/kubernetes/ && \
 scp ${MASTER_IP}:/srv/pki/ca.crt /var/run/kubernetes/ 
 
 for dir in /usr/service/*/env ; do echo ${MASTER_IP} > ${dir}/MASTER_IP ; done
