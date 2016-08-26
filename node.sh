@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+. ./env
+
 ########## Install docker
 apt-get update
 apt-get install -y aptitude
@@ -62,6 +64,12 @@ service docker start
 #ip link set docker0 down 
 #ip link delete docker0
 
+ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts
+mkdir -p /var/run/kubernetes && \
+scp ${MASTER_IP}:/srv/pki/{MY_IP}.{crt,key} /var/run/kubernetes/ && \
+scp ${MASTER_IP}:/srv/pki/ca.crt /var/run/kubernetes/ 
+
+for dir in /usr/service/*/env ; do echo ${MASTER_IP} > ${dir}/MASTER_IP ; done
 
 aptitude install -y daemontools-run 
 svc -t /etc/service/*

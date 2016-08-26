@@ -1,5 +1,10 @@
 #!/bin/bash
 
 exec 2>&1
-exec /usr/local/bin/proxy   --master=http://172.16.1.101:8080
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/proxy  \
+        --master=http://${MASTER_IP}:8080 \
+        --v=3 \
+        '
 
