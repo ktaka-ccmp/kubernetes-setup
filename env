@@ -1,9 +1,10 @@
 
 
 : ${MASTER_IP:=172.16.1.101}
+: ${NUM:=10}
+
+IPPREFIX=${MASTER_IP%.*}
+IPRANGE=$( seq -w ${MASTER_IP##*.} $((${MASTER_IP##*.}+${NUM})) )
 
 MY_IP=$(hostname -i)
-
-IPPREFIX=172.16.1
-IPRANGE=$(seq -w 101 110)
 
