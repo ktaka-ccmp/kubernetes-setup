@@ -5,8 +5,8 @@
 ### On Master
 
 ```
-export MASTER_IP=${MASTER_IP}
-script=./master.sh
+echo export MASTER_IP=$(hostname -i)
+export MASTER_IP=$(hostname -i);  script=./master.sh
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
 && git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
@@ -18,6 +18,7 @@ apt-get update && apt-get install -y git \
 
 ```
 export MASTER_IP=${MASTER_IP}
+
 script=./node.sh
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
@@ -30,6 +31,7 @@ or...
 
 ```
 export MASTER_IP=${MASTER_IP}
+
 script=./node.sh
 rsync -ae ssh ktaka@${MASTER_IP}:~/kubernetes-setup ./ && cd kubernetes-setup && $script
 ```
