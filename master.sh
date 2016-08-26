@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-MASTER_IP=172.16.1.101
+. ./env
 
 ########## Install docker
 apt-get update
@@ -19,6 +19,8 @@ rsync -av ./rootfs_master/ /
 gunzip -f /usr/local/bin/hyperkube.gz
 gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
+
+for dir in /usr/service/etcd/env ; do echo ${MASTER_IP} > ${dir}/MASTER_IP ; done
 
 aptitude install -y daemontools-run 
 

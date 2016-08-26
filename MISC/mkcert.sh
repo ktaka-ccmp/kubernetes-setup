@@ -1,8 +1,6 @@
 #!/bin/bash
 
-MASTER_IP=172.16.1.101
-IPPREFIX=172.16.1
-IPRANGE=$(seq 101 110)
+. ./env
 
 CERTDIR=/srv/kubernetes
 PKIDIR=/srv/pki
