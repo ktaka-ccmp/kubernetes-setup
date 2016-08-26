@@ -65,8 +65,9 @@ service docker start
 #ip link delete docker0
 
 ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts
-mkdir -p /var/run/kubernetes && \
-scp ${MASTER_IP}:/srv/pki/${MY_IP}.{crt,key} /var/run/kubernetes/ && \
+mkdir -p /var/run/kubernetes 
+scp ${MASTER_IP}:/srv/pki/${MY_IP}.crt /var/run/kubernetes/kubelet.crt 
+scp ${MASTER_IP}:/srv/pki/${MY_IP}.key /var/run/kubernetes/kubelet.key 
 scp ${MASTER_IP}:/srv/pki/ca.crt /var/run/kubernetes/ 
 
 for dir in /usr/service/*/env ; do echo ${MASTER_IP} > ${dir}/MASTER_IP ; done
