@@ -8,8 +8,8 @@
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
 && git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
-&& cd kubernetes-setup \
-&& ./master.sh
+&& cd kubernetes-setup 
+MASTER_IP=${MASTER_IP} ./master.sh
 ```
 
 ### On Node
@@ -18,8 +18,8 @@ apt-get update && apt-get install -y git \
 apt-get update && apt-get install -y git \
 && ssh-keyscan github.com >> ~/.ssh/known_hosts \
 && git clone git@github.com:ktaka-ccmp/kubernetes-setup.git \
-&& cd kubernetes-setup \
-&& ./node.sh
+&& cd kubernetes-setup 
+MASTER_IP=${MASTER_IP} ./node.sh
 ```
 
 ### How to monitor whole cluster
