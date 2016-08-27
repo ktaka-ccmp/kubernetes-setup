@@ -34,6 +34,7 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = kubernetes
 IP.1 = ${ip}
+IP.1 = 10.254.0.1
 EOF
 
 openssl genrsa -out $ip.key 2048 
