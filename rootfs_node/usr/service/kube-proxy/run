@@ -5,6 +5,7 @@ exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/proxy  \
         --master=http://${MASTER_IP}:8080 \
+	--masquerade-all=true \
         --v=3 \
         '
 
