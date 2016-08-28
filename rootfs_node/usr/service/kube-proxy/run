@@ -4,7 +4,7 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/proxy  \
-	--master=https://${MASTER_IP}:443 \
+	--master=http://${MASTER_IP}:8080 \
 	--v=3 \
         '
 
