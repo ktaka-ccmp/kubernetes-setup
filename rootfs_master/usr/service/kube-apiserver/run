@@ -16,6 +16,7 @@ exec \
 	--tls-private-key-file=/srv/kubernetes/server.key \
 	--service-account-key-file=/srv/kubernetes/server.key \
 	--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota \
+	--cloud-provider="" \
 	--v 2
 	'
 

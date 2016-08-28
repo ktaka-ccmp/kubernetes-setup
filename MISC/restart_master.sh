@@ -7,4 +7,5 @@ gunzip -f /usr/local/bin/etcd.gz
 gunzip -f /usr/local/bin/etcdctl.gz
 
 svc -t /etc/service/*
+svc -t /etc/service/*/log
 
