@@ -5,6 +5,7 @@ exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/flanneld  \
 	--etcd-endpoints=http://${MASTER_IP}:2379 \
+	--ip-masq=true \
 	--v=3 \
 	'
 
