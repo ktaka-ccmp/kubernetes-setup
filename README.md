@@ -30,7 +30,7 @@ or...
 ```
 export MASTER_IP=${MASTER_IP}
 
-ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts && rsync -ae ssh ${MASTER_IP}:~/kubernetes-setup ./ && cd kubernetes-setup && ./node.sh 
+ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts && rsync -ave ssh ${MASTER_IP}:~/kubernetes-setup ./ && cd kubernetes-setup && ./node.sh 
 ```
 
 ### How to monitor whole cluster

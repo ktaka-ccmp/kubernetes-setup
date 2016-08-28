@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: my-nginx
-        image: 172.16.1.101:5000/ktaka/nginx
+        image: 172.16.1.120:5000/ktaka/nginx
         ports:
         - containerPort: 80
 

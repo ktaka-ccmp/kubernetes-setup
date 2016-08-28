@@ -44,7 +44,7 @@ Requires=docker.socket
 EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
 #ExecStart=/usr/bin/docker daemon -H fd:// --bridge=cbr0 --iptables=false --ip-masq=false
-ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --ip-masq=\${FLANNEL_IPMASQ} --insecure-registry ${MASTER_IP}:5000
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --insecure-registry ${MASTER_IP}:5000 
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
@@ -65,13 +65,18 @@ service docker start
 #ip link delete docker0
 
 ssh-keyscan ${MASTER_IP} >> ~/.ssh/known_hosts
-mkdir -p /var/run/kubernetes 
-scp ${MASTER_IP}:/srv/pki/${MY_IP}.crt /var/run/kubernetes/kubelet.crt 
-scp ${MASTER_IP}:/srv/pki/${MY_IP}.key /var/run/kubernetes/kubelet.key 
-scp ${MASTER_IP}:/srv/pki/ca.crt /var/run/kubernetes/ 
+CERT_DIR=/var/lib/kubelet/tls
+mkdir -p ${CERT_DIR}
+scp ${MASTER_IP}:/srv/pki/${MY_IP}.crt ${CERT_DIR}/kubelet.crt 
+scp ${MASTER_IP}:/srv/pki/${MY_IP}.key ${CERT_DIR}/kubelet.key 
+scp ${MASTER_IP}:/srv/pki/ca.crt ${CERT_DIR}/
 
 for dir in /usr/service/*/env ; do echo ${MASTER_IP} > ${dir}/MASTER_IP ; done
 
 aptitude install -y daemontools-run 
 svc -t /etc/service/*
+
+#iptables -t nat -D POSTROUTING ! -d  10.0.0.0/8 -j MASQUERADE -m addrtype ! --dst-type LOCAL
+#iptables -t nat -A POSTROUTING ! -d  10.0.0.0/8 -j MASQUERADE -m addrtype ! --dst-type LOCAL
+
 
