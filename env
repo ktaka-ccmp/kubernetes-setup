@@ -1,6 +1,11 @@
 
+err(){
+echo Please export MASTER_IP=xxx.xxx.xxx.xxx 
+exit 1
+}
 
-: ${MASTER_IP:=172.16.1.101}
+[[ -z $MASTER_IP ]] && err
+
 : ${NUM:=10}
 
 IPPREFIX=${MASTER_IP%.*}
