@@ -42,6 +42,7 @@
     with_items:
       - flanneld.tar.xz
       - hyperkube.tar.xz
+      - etcdctl.tar.xz
 
   - file: src=hyperkube dest=/usr/local/bin/{{ item }} state=link
     with_items:
