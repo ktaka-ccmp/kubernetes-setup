@@ -21,6 +21,37 @@
       - etcd.tar.xz
       - hyperkube.tar.xz
 
+  - file: src=hyperkube dest=/usr/local/bin/{{ item }} state=link
+    with_items:
+      - apiserver
+      - controller-manager
+      - scheduler
+      - federation-apiserver
+      - federation-controller-manager
+      - kubectl
+      - kubelet
+      - proxy
 
+
+  - file: path=/usr/service/{{ item }} state=directory mode=0755
+    with_items:
+      - etcd
+      - kube-apiserver
+      - kube-controller-manager
+      - kube-scheduler
+
+  - file: path=/usr/service/{{ item }}/log state=directory mode=0755
+    with_items:
+
+  - template: src=./templates/rootfs_master/usr/service/{{ item }}/run dest=/usr/service/{{ item }}/run
+    with_items:
+
+
+  - file: src=/usr/service/{{ item }} dest=/etc/service/{{ item }} state=link
+    with_items:
+      - etcd
+      - kube-apiserver
+      - kube-controller-manager
+      - kube-scheduler
 
 
