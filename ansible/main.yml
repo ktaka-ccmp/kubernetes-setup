@@ -5,6 +5,15 @@
 - hosts: masters
   remote_user: root
 
+  vars:
+    daemons: [ 'etcd', 'apiserver', 'controller-manager', 'scheduler' ]
+    packages: 
+      - apt-transport-https
+      - ca-certificates
+      - bridge-utils
+      - sudo
+      - aptitude
+
   tasks:
 
   - apt: update_cache=yes
@@ -12,9 +21,32 @@
 
   - apt: pkg={{ item }} state=present
     with_items:
-      - aptitude
+      - "{{ packages }}"
 
-  - unarchive: src=./templates/rootfs_common/usr/local/bin/{{ item }} dest=/usr/local/bin/
+  - local_action: file path=./PKI state=directory
+
+  - local_action: stat path=./PKI/ca.key 
+    register: cakey
+  - local_action: stat path=./PKI/ca.crt 
+    register: cacrt
+
+  - local_action: shell openssl genrsa -out ./PKI/ca.key 2048
+    when: not cakey.stat.exists
+  - local_action: shell openssl req -x509 -new -nodes -key ./PKI/ca.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -days 10000 -out ./PKI/ca.crt
+    when: (not cacrt.stat.exists) or (not cakey.stat.exists)
+
+  - local_action: template src=files/pki/openssl.cnf dest=./PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl genrsa -out ./PKI/{{ ansible_eth0.ipv4.address }}.key 2048
+  - local_action: shell openssl req -new -key ./PKI/{{ ansible_eth0.ipv4.address }}.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -out ./PKI/{{ ansible_eth0.ipv4.address }}.csr -config ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl x509 -req -in ./PKI/{{ ansible_eth0.ipv4.address }}.csr -CA ./PKI/ca.crt -CAkey ./PKI/ca.key -CAcreateserial -out ./PKI/{{ ansible_eth0.ipv4.address }}.crt -days 10000  -extensions v3_req -extfile ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
+
+  - file: path=/srv/kubernetes/ state=directory
+  - copy: src=./PKI/ca.crt dest=/srv/kubernetes/ca.crt mode=0700
+  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.key dest=/srv/kubernetes/server.key mode=0700
+  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.crt dest=/srv/kubernetes/server.crt mode=0700
+
+
+  - unarchive: src=./files/common/usr/local/bin/{{ item }} dest=/usr/local/bin/
     with_items:
       - flanneld.tar.xz
       - etcdctl.tar.xz
@@ -24,34 +56,60 @@
   - file: src=hyperkube dest=/usr/local/bin/{{ item }} state=link
     with_items:
       - apiserver
-      - controller-manager
       - scheduler
+      - controller-manager
       - federation-apiserver
       - federation-controller-manager
       - kubectl
       - kubelet
       - proxy
 
-
-  - file: path=/usr/service/{{ item }} state=directory mode=0755
-    with_items:
-      - etcd
-      - kube-apiserver
-      - kube-controller-manager
-      - kube-scheduler
-
   - file: path=/usr/service/{{ item }}/log state=directory mode=0755
     with_items:
+      - "{{ daemons }}"
 
-  - template: src=./templates/rootfs_master/usr/service/{{ item }}/run dest=/usr/service/{{ item }}/run
+  - template: src=./files/master/usr/service/{{ item }}/run dest=/usr/service/{{ item }}/run mode=0700
     with_items:
+      - "{{ daemons }}"
 
+  - template: src=./files/master/usr/service/{{ item }}/log/run dest=/usr/service/{{ item }}/log/run mode=0700
+    with_items:
+      - "{{ daemons }}"
+
+  - file: path=/etc/service/ state=directory mode=0755
+    with_items:
+      - "{{ daemons }}"
 
   - file: src=/usr/service/{{ item }} dest=/etc/service/{{ item }} state=link
     with_items:
-      - etcd
-      - kube-apiserver
-      - kube-controller-manager
-      - kube-scheduler
+      - "{{ daemons }}"
+
+  - apt: pkg={{ item }} state=present
+    with_items:
+      - daemontools-run
+
+  - shell: 'svc -t /etc/service/* ; sleep 3'
+
+  - shell: "etcdctl set /coreos.com/network/config '{\"Network\":\"10.0.0.0/16\",\"SubnetLen\":24,\"Backend\":{\"Type\": \"host-gw\"}}'"
+
+  - file: path=/etc/apt/sources.list.d/ state=directory mode=0755
+  - template: src=files/common/etc/apt/sources.list.d/docker.list  dest=/etc/apt/sources.list.d/docker.list
+  - shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+  - apt: update_cache=yes
+  - apt: upgrade=yes
+  - apt: pkg=docker-engine state=present
+
+  - template: src=files/common/etc/systemd/system/multi-user.target.wants/docker.service dest=/etc/systemd/system/multi-user.target.wants/docker.service
+  - shell: systemctl daemon-reload
+  - service: state=restarted name=docker
+
+  - file: path=/root/registry/nginx state=directory mode=0755
+  - template: src=files/registry/nginx/Dockerfile dest=/root/registry/nginx/Dockerfile
+
+  - shell: 'docker run -d -p 5000:5000 -v /var/opt:/var/lib/registry registry \
+&& cd /root/registry/nginx && docker build -t ktaka/nginx . \
+&& docker tag ktaka/nginx {{ ansible_eth0.ipv4.address }}:5000/ktaka/nginx \
+&& docker push {{ ansible_eth0.ipv4.address }}:5000/ktaka/nginx '
 
 

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+exec 2>&1
+exec /usr/local/bin/scheduler \
+ 	--logtostderr=true \
+ 	--master=127.0.0.1:8080 \
+	--v 1 \
+

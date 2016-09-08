@@ -1,0 +1,12 @@
+#!/bin/bash
+
+exec 2>&1
+exec /usr/local/bin/controller-manager   \
+ 	--master=127.0.0.1:8080 \
+	--node-monitor-grace-period=10s \
+	--pod-eviction-timeout=20s \
+	--service-account-private-key-file=/srv/kubernetes/server.key \
+	--root-ca-file=/srv/kubernetes/ca.crt \
+ 	--logtostderr=true \
+	--v 1 \
+
