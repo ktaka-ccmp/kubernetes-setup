@@ -4,7 +4,7 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/flanneld  \
-	--etcd-endpoints=http://${MASTER_IP}:2379 \
+	--etcd-endpoints={% for host in groups['masters'] %}http://{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:2739{% if not loop.last %},{% endif %}{% endfor %} \
 	--ip-masq=true \
 	--v=3 \
 	'

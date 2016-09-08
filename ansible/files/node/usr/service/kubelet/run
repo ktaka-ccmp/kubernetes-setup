@@ -4,7 +4,7 @@ exec 2>&1
 exec \
   envdir ./env \
     sh -c 'exec /usr/local/bin/kubelet  \
-	--api-servers=https://${MASTER_IP}:443 \
+        --api-servers={% for host in groups['masters'] %}https://{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:443{% if not loop.last %},{% endif %}{% endfor %} \
 	--cert-dir=/var/lib/kubelet/tls \
 	--v 2
 	'

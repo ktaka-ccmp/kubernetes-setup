@@ -6,7 +6,8 @@
   remote_user: root
 
   vars:
-    daemons: [ 'flanneld', 'kubelet', 'proxy' ]
+    kube_daemons: [ 'kubelet', 'proxy' ]
+    other_daemons: [ 'flanneld' ]
     packages: 
       - apt-transport-https
       - ca-certificates
@@ -23,17 +24,18 @@
     with_items:
       - "{{ packages }}"
 
-  - local_action: file path=./PKI state=directory
+  - local_action: file path=/root/PKI state=directory
 
-  - local_action: template src=files/pki/openssl.cnf dest=./PKI/{{ ansible_eth0.ipv4.address }}.cnf
-  - local_action: shell openssl genrsa -out ./PKI/{{ ansible_eth0.ipv4.address }}.key 2048
-  - local_action: shell openssl req -new -key ./PKI/{{ ansible_eth0.ipv4.address }}.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -out ./PKI/{{ ansible_eth0.ipv4.address }}.csr -config ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
-  - local_action: shell openssl x509 -req -in ./PKI/{{ ansible_eth0.ipv4.address }}.csr -CA ./PKI/ca.crt -CAkey ./PKI/ca.key -CAcreateserial -out ./PKI/{{ ansible_eth0.ipv4.address }}.crt -days 10000  -extensions v3_req -extfile ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: template src=files/pki/openssl.cnf dest=/root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl genrsa -out /root/PKI/{{ ansible_eth0.ipv4.address }}.key 2048
+  - local_action: shell openssl req -new -key /root/PKI/{{ ansible_eth0.ipv4.address }}.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -out /root/PKI/{{ ansible_eth0.ipv4.address }}.csr -config /root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl x509 -req -in /root/PKI/{{ ansible_eth0.ipv4.address }}.csr -CA /root/PKI/ca.crt -CAkey /root/PKI/ca.key -CAcreateserial -out /root/PKI/{{ ansible_eth0.ipv4.address }}.crt -days 10000  -extensions v3_req -extfile /root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
 
   - file: path=/var/lib/kubelet/tls state=directory
-  - copy: src=./PKI/ca.crt dest=/var/lib/kubelet/tls/ca.crt mode=0700
-  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.key dest=/var/lib/kubelet/tls/kubelet.key mode=0700
-  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.crt dest=/var/lib/kubelet/tls/kubelet.crt mode=0700
+  - copy: src=./files/node/var/lib/kubelet/kubeconfig dest=/var/lib/kubelet/kubeconfig
+  - copy: src=/root/PKI/ca.crt dest=/var/lib/kubelet/tls/ca.crt mode=0700
+  - copy: src=/root/PKI/{{ ansible_eth0.ipv4.address }}.key dest=/var/lib/kubelet/tls/kubelet.key mode=0700
+  - copy: src=/root/PKI/{{ ansible_eth0.ipv4.address }}.crt dest=/var/lib/kubelet/tls/kubelet.crt mode=0700
 
   - unarchive: src=./files/common/usr/local/bin/{{ item }} dest=/usr/local/bin/
     with_items:
@@ -42,27 +44,32 @@
 
   - file: src=hyperkube dest=/usr/local/bin/{{ item }} state=link
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
 
   - file: path=/usr/service/{{ item }}/log state=directory mode=0755
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
+      - "{{ other_daemons }}"
 
-  - template: src=./files/master/usr/service/{{ item }}/run dest=/usr/service/{{ item }}/run mode=0700
+  - template: src=./files/node/usr/service/{{ item }}/run dest=/usr/service/{{ item }}/run mode=0700
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
+      - "{{ other_daemons }}"
 
-  - template: src=./files/master/usr/service/{{ item }}/log/run dest=/usr/service/{{ item }}/log/run mode=0700
+  - template: src=./files/node/usr/service/{{ item }}/log/run dest=/usr/service/{{ item }}/log/run mode=0700
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
+      - "{{ other_daemons }}"
 
   - file: path=/etc/service/ state=directory mode=0755
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
+      - "{{ other_daemons }}"
 
   - file: src=/usr/service/{{ item }} dest=/etc/service/{{ item }} state=link
     with_items:
-      - "{{ daemons }}"
+      - "{{ kube_daemons }}"
+      - "{{ other_daemons }}"
 
   - apt: pkg={{ item }} state=present
     with_items:

@@ -7,7 +7,8 @@ Requires=docker.socket
 [Service]
 EnvironmentFile=-/run/flannel/subnet.env
 Type=notify
-ExecStart=/usr/bin/docker daemon -H fd:// --bip=\${FLANNEL_SUBNET} --mtu=\${FLANNEL_MTU} --ip-masq=\${FLANNEL_IPMASQ} --insecure-registry {% for host in groups['registry'] %} {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:5000 {% endfor %}
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ} --insecure-registry {% for host in groups['registry'] %} {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:5000 {% endfor %}
+
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576

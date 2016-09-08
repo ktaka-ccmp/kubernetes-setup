@@ -23,27 +23,27 @@
     with_items:
       - "{{ packages }}"
 
-  - local_action: file path=./PKI state=directory
+  - local_action: file path=/root/PKI state=directory
 
-  - local_action: stat path=./PKI/ca.key 
+  - local_action: stat path=/root/PKI/ca.key 
     register: cakey
-  - local_action: stat path=./PKI/ca.crt 
+  - local_action: stat path=/root/PKI/ca.crt 
     register: cacrt
 
-  - local_action: shell openssl genrsa -out ./PKI/ca.key 2048
+  - local_action: shell openssl genrsa -out /root/PKI/ca.key 2048
     when: not cakey.stat.exists
-  - local_action: shell openssl req -x509 -new -nodes -key ./PKI/ca.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -days 10000 -out ./PKI/ca.crt
+  - local_action: shell openssl req -x509 -new -nodes -key /root/PKI/ca.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -days 10000 -out /root/PKI/ca.crt
     when: (not cacrt.stat.exists) or (not cakey.stat.exists)
 
-  - local_action: template src=files/pki/openssl.cnf dest=./PKI/{{ ansible_eth0.ipv4.address }}.cnf
-  - local_action: shell openssl genrsa -out ./PKI/{{ ansible_eth0.ipv4.address }}.key 2048
-  - local_action: shell openssl req -new -key ./PKI/{{ ansible_eth0.ipv4.address }}.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -out ./PKI/{{ ansible_eth0.ipv4.address }}.csr -config ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
-  - local_action: shell openssl x509 -req -in ./PKI/{{ ansible_eth0.ipv4.address }}.csr -CA ./PKI/ca.crt -CAkey ./PKI/ca.key -CAcreateserial -out ./PKI/{{ ansible_eth0.ipv4.address }}.crt -days 10000  -extensions v3_req -extfile ./PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: template src=files/pki/openssl.cnf dest=/root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl genrsa -out /root/PKI/{{ ansible_eth0.ipv4.address }}.key 2048
+  - local_action: shell openssl req -new -key /root/PKI/{{ ansible_eth0.ipv4.address }}.key -subj "/CN={{ ansible_eth0.ipv4.address }}" -out /root/PKI/{{ ansible_eth0.ipv4.address }}.csr -config /root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
+  - local_action: shell openssl x509 -req -in /root/PKI/{{ ansible_eth0.ipv4.address }}.csr -CA /root/PKI/ca.crt -CAkey /root/PKI/ca.key -CAcreateserial -out /root/PKI/{{ ansible_eth0.ipv4.address }}.crt -days 10000  -extensions v3_req -extfile /root/PKI/{{ ansible_eth0.ipv4.address }}.cnf
 
   - file: path=/srv/kubernetes/ state=directory
-  - copy: src=./PKI/ca.crt dest=/srv/kubernetes/ca.crt mode=0700
-  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.key dest=/srv/kubernetes/server.key mode=0700
-  - copy: src=./PKI/{{ ansible_eth0.ipv4.address }}.crt dest=/srv/kubernetes/server.crt mode=0700
+  - copy: src=/root/PKI/ca.crt dest=/srv/kubernetes/ca.crt mode=0700
+  - copy: src=/root/PKI/{{ ansible_eth0.ipv4.address }}.key dest=/srv/kubernetes/server.key mode=0700
+  - copy: src=/root/PKI/{{ ansible_eth0.ipv4.address }}.crt dest=/srv/kubernetes/server.crt mode=0700
 
 
   - unarchive: src=./files/common/usr/local/bin/{{ item }} dest=/usr/local/bin/
@@ -93,14 +93,14 @@
   - shell: "etcdctl set /coreos.com/network/config '{\"Network\":\"10.0.0.0/16\",\"SubnetLen\":24,\"Backend\":{\"Type\": \"host-gw\"}}'"
 
   - file: path=/etc/apt/sources.list.d/ state=directory mode=0755
-  - template: src=files/master/etc/apt/sources.list.d/docker.list  dest=/etc/apt/sources.list.d/docker.list
+  - template: src=./files/common/etc/apt/sources.list.d/docker.list  dest=/etc/apt/sources.list.d/docker.list
   - shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
   - apt: update_cache=yes
   - apt: upgrade=yes
   - apt: pkg=docker-engine state=present
 
-  - template: src=files/common/etc/systemd/system/multi-user.target.wants/docker.service dest=/etc/systemd/system/multi-user.target.wants/docker.service
+  - template: src=files/master/etc/systemd/system/multi-user.target.wants/docker.service dest=/etc/systemd/system/multi-user.target.wants/docker.service
   - shell: systemctl daemon-reload
   - service: state=restarted name=docker
 
