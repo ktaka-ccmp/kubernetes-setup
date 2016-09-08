@@ -18,11 +18,12 @@
   tasks:
 
   - apt: update_cache=yes
-  - apt: upgrade=yes
 
   - apt: pkg={{ item }} state=present
     with_items:
       - "{{ packages }}"
+
+  - apt: upgrade=yes
 
   - local_action: file path=/root/PKI state=directory
 
