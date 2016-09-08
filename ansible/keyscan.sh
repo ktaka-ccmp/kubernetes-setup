@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 HOSTS_FILE=./hosts
-HOSTS=$(sed "/^\[.*\]$/d" $HOSTS_FILE )
+HOSTS=$(sed "/^\[.*\]$/d" $HOSTS_FILE|sort -u )
 
 for hst in $HOSTS ; do
 	ssh-keygen -R $hst
