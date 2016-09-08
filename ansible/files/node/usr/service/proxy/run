@@ -1,10 +1,7 @@
 #!/bin/bash
 
 exec 2>&1
-exec \
-  envdir ./env \
-    sh -c 'exec /usr/local/bin/proxy  \
+exec /usr/local/bin/proxy  \
 	--master={% for host in groups['masters'] %}http://{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:8080{% if not loop.last %},{% endif %}{% endfor %} \
 	--v=3 \
-        '
 
