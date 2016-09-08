@@ -1,0 +1,6 @@
+#!/bin/sh
+
+exec /usr/bin/multilog t s1000000 ./main
+
+
+

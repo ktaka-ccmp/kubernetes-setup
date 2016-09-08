@@ -1,0 +1,11 @@
+#!/bin/bash
+
+exec 2>&1
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/scheduler \
+ 	--logtostderr=true \
+ 	--master=127.0.0.1:8080 \
+	--v 1 \
+	'
+

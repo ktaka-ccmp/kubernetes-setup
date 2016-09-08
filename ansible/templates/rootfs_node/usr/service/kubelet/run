@@ -1,0 +1,11 @@
+#!/bin/bash
+
+exec 2>&1
+exec \
+  envdir ./env \
+    sh -c 'exec /usr/local/bin/kubelet  \
+	--api-servers=https://${MASTER_IP}:443 \
+	--cert-dir=/var/lib/kubelet/tls \
+	--v 2
+	'
+

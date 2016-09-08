@@ -1,0 +1,26 @@
+# Usage:
+#  ansible-playbook -i ./hosts ./main.yml -vv
+#
+
+- hosts: masters
+  remote_user: root
+
+  tasks:
+
+  - apt: update_cache=yes
+  - apt: upgrade=yes
+
+  - apt: pkg={{ item }} state=present
+    with_items:
+      - aptitude
+
+  - unarchive: src=./templates/rootfs_common/usr/local/bin/{{ item }} dest=/usr/local/bin/
+    with_items:
+      - flanneld.tar.xz
+      - etcdctl.tar.xz
+      - etcd.tar.xz
+      - hyperkube.tar.xz
+
+
+
+
